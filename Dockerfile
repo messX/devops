@@ -39,7 +39,7 @@ RUN echo "source /home/ubuntu/ver3.4/bin/activate" >> /home/ubuntu/.bashrc
 RUN /bin/bash -c "export PYTHONPATH=/home/ubuntu/prometheus-custom-exporter/"
 RUN /bin/bash -c "source /home/ubuntu/ver3.4/bin/activate"
 ENV BRANCH_NAME master
-RUN cd /home/ubuntu && git clone https://66b7e54aec473b7a52b48c57dec3e6fc8a5c4831@github.com/VG13/NginxExporter.git
+RUN cd /home/ubuntu && git clone https://3a1305696a02c640d882cec27edb4d3857f9d641@github.com/VG13/NginxExporter.git
 RUN /home/ubuntu/ver3.4/bin/pip install -r /home/ubuntu/prometheus-custom-exporter/requirements.txt
 VOLUME /mnt/logs
 COPY docker-entrypoint.sh /usr/local/bin/
