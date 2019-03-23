@@ -1,6 +1,6 @@
 version: '2.2'
 services:
-  mt-nginx-build:
+  mt-nginx:
     image: nginx_monitor_prod
     build:
       context: .
