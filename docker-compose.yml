@@ -1,12 +1,17 @@
 version: '2.2'
 services:
-  mt-nginx-monitor:
-    container_name: nginx_monitor_prod
-    init: true
-    restart: always
+  mt-nginx-build:
+    image: nginx_monitor_prod
+    build:
+      context: .
+      dockerfile: Dockerfile
     env_file:
       - env-prod.env
-    volumes:
-      - /home/ubuntu/logs:/mnt/logs
+  mt-nginx:
+    image: nginx_monitor_prod_main
+    env_file:
+      - env-prod.env
     ports:
       - 8080:8080
+    volumes:
+      - /home/ubuntu/logs:/mnt/logs
