@@ -20,17 +20,12 @@ RUN apt-get install curl -y
 RUN apt-get install python-dev -y
 RUN apt-get install python3-dev -y
 RUN apt-get install libpq-dev -y
-RUN apt-get install nginx -y
-RUN apt-get install apache2-utils -y
-RUN /etc/init.d/nginx start
 
 
 #nginx setup
 RUN mkdir -p /home/ubuntu/devops && mkdir -p /mnt/logs && chown -R ubuntu:ubuntu /home/ubuntu && chown -R ubuntu:ubuntu /mnt/logs
 
 #django setup
-RUN  apt-get install software-properties-common -y
-RUN  apt-add-repository universe -y
 RUN  apt-get update -y
 RUN  apt-get install python-pip -y
 
