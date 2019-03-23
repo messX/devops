@@ -11,19 +11,19 @@ class Generator:
     def __init__(self, log_file):
         self.log_file = log_file
         self.stats = {
-            "total_requests_count": Counter('total_request_count', 'Total requests count'),
-            "failed_requests_count": Counter('failed_request_count', 'Failed requests count'),
-            "total_requests_count_by_service": Counter('total_request_count_by_service', 'Total requests count by service',
+            "total_requests_count": Counter('mt_apps_nginx_total_request_count', 'Total requests count'),
+            "failed_requests_count": Counter('mt_apps_nginx_failed_request_count', 'Failed requests count'),
+            "total_requests_count_by_service": Counter('mt_apps_nginx_total_request_count_by_service', 'Total requests count by service',
                                             ['service']),
-            "total_requests_failed_count_by_service": Counter('total_request_failed_count_by_service',
+            "total_requests_failed_count_by_service": Counter('mt_apps_nginx_total_request_failed_count_by_service',
                                                        'Total failed requests count by service',
                                                        ['service']),
-            "total_processing_time": Counter('avg_processing_time', 'avg time to process'),
-            "total_processing_time_by_url": Counter('avg_processing_time_bu_url', 'avg time to process by url', ['service']),
-            "total_request_by_user":Counter('total_request_count_by_user', 'Total request by user type',
+            "total_processing_time": Counter('mt_apps_nginx_total_processing_time', 'avg time to process'),
+            "total_processing_time_by_url": Counter('mt_apps_nginx_total_processing_time_by_url', 'avg time to process by url', ['service']),
+            "total_request_by_user":Counter('mt_apps_nginx_total_request_count_by_user', 'Total request by user type',
                                              ['user']),
-            "requests_response_code_count": Counter('mt_apps_requests_response_code_count_nginx',
-                                           'Requests count by response code', ['service', 'success_code'])
+            "requests_response_code_count": Counter('mt_apps_nginx_response_code_count_nginx',
+                                           'Requests count by response code', ['service', 'status'])
         }
 
     def watch_file(self):
