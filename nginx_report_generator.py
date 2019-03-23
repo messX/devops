@@ -139,13 +139,13 @@ class NginxReporter:
         parsed_data=NginxParsing.parse_log(line)
         url = parsed_data['request_request_uri'].split('?')[0]
         stats['total_requests_count'].inc()
-        stats['total_requests_count_by_service'].label(url).inc()
-        stats['requests_response_code_count'].label(url, parsed_data['status']).inc()
-        stats['total_request_by_user'].label(parsed_data['remote_user']).inc()
+        stats['total_requests_count_by_service'].labels(service=url).inc()
+        stats['requests_response_code_count'].labels(service=url, status=parsed_data['status']).inc()
+        stats['total_request_by_user'].labels(service=parsed_data['remote_user']).inc()
         stats['total_processing_time'].inc(parsed_data['request_time'])
-        stats['total_processing_time_by_url'].label(url).inc(parsed_data['request_time'])
+        stats['total_processing_time_by_url'].labels(service=url).inc(parsed_data['request_time'])
         if parsed_data['status'] not in [200, 204]:
             stats['failed_requests_count'].inc()
-            stats['total_requests_failed_count_by_service'].label(url).inc()
+            stats['total_requests_failed_count_by_service'].labels(service=url).inc()
 
 

@@ -20,7 +20,7 @@ RUN apt-get install python-dev -y
 RUN apt-get install python3-dev -y
 
 #nginx setup
-RUN mkdir -p /home/ubuntu/prometheus-custom-exporter && mkdir -p /mnt/logs && chown -R ubuntu:ubuntu /home/ubuntu && chown -R ubuntu:ubuntu /mnt/logs
+RUN mkdir -p /home/ubuntu/devops && mkdir -p /mnt/logs && chown -R ubuntu:ubuntu /home/ubuntu && chown -R ubuntu:ubuntu /mnt/logs
 
 #django setup
 RUN  apt-get install software-properties-common -y
@@ -34,13 +34,13 @@ RUN  chown -R ubuntu /home/ubuntu/ver3.4
 RUN /home/ubuntu/ver3.4/bin/pip install autoenv
 
 RUN echo "export PYTHONIOENCODING=utf-8" >> /home/ubuntu/.bashrc
-RUN echo "export PYTHONPATH=/home/ubuntu/prometheus-custom-exporter/" >> /home/ubuntu/.bashrc
+RUN echo "export PYTHONPATH=/home/ubuntu/devops/" >> /home/ubuntu/.bashrc
 RUN echo "source /home/ubuntu/ver3.4/bin/activate" >> /home/ubuntu/.bashrc
-RUN /bin/bash -c "export PYTHONPATH=/home/ubuntu/prometheus-custom-exporter/"
+RUN /bin/bash -c "export PYTHONPATH=/home/ubuntu/devops/"
 RUN /bin/bash -c "source /home/ubuntu/ver3.4/bin/activate"
 ENV BRANCH_NAME master
-RUN cd /home/ubuntu && git clone https://3a1305696a02c640d882cec27edb4d3857f9d641@github.com/VG13/NginxExporter.git
-RUN /home/ubuntu/ver3.4/bin/pip install -r /home/ubuntu/prometheus-custom-exporter/requirements.txt
+RUN cd /home/ubuntu && git clone https://3a1305696a02c640d882cec27edb4d3857f9d641@github.com/messX/devops.git
+RUN /home/ubuntu/ver3.4/bin/pip install -r /home/ubuntu/devops/requirements.txt
 VOLUME /mnt/logs
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod 775 usr/local/bin/docker-entrypoint.sh
