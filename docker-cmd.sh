@@ -1,1 +1,1 @@
-sudo docker run -p 8000:8000 -v /mnt/logs:/home/ubuntu/logs --name metrippingnginxexporter metrippingnginxexporter
+sudo docker run -p 8080:8080 -v /mnt/logs:/home/ubuntu/logs --name metrippingnginxexporter metrippingnginxexporter
