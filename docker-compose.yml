@@ -1,0 +1,12 @@
+version: '2.2'
+services:
+  mt-nginx-monitor:
+    container_name: nginx_monitor_prod
+    init: true
+    restart: always
+    env_file:
+      - env-prod.env
+    volumes:
+     - /home/ubuntu/logs:/mnt/logs
+    ports:
+      -  8080:8080
