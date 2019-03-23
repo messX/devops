@@ -1,1 +1,1 @@
-sudo docker run -p 8000:8000 -v /mnt/logs:/home/ubuntu/logs --name metrippingnginxexporter metrippingnginxexporter -e ENV_NAME=$1
+sudo docker run -p 8000:8000 -v /mnt/logs:/home/ubuntu/logs --name metrippingnginxexporter metrippingnginxexporter
