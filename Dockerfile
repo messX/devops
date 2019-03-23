@@ -40,6 +40,20 @@ RUN echo "source /home/ubuntu/ver3.4/bin/activate" >> /home/ubuntu/.bashrc
 RUN /bin/bash -c "export PYTHONPATH=/home/ubuntu/devops/"
 RUN /bin/bash -c "source /home/ubuntu/ver3.4/bin/activate"
 ENV BRANCH_NAME master
+
+# Install base dependencies
+RUN apt-get update && apt-get install -y -q --no-install-recommends \
+        apt-transport-https \
+        build-essential \
+        ca-certificates \
+        curl \
+        git \
+        libssl-dev \
+        supervisor \
+        vim \
+        wget \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN cd /home/ubuntu && git clone https://3a1305696a02c640d882cec27edb4d3857f9d641@github.com/messX/devops.git
 RUN /home/ubuntu/ver3.4/bin/pip install -r /home/ubuntu/devops/requirements.txt
 VOLUME /mnt/logs
