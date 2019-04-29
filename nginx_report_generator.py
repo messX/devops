@@ -1,5 +1,11 @@
+# from pprint import pprint
+import json
 import re
-from datetime import datetime
+from collections import OrderedDict
+from datetime import datetime, timedelta
+from pprint import pprint
+
+import os
 
 
 class NginxParsing:
@@ -34,8 +40,7 @@ class NginxParsing:
         '\$uid_got': '(?P<uid_got>[\-0-9A-Za-z=]+)',
         '\$uid_set': '(?P<uid_set>[\-0-9A-Za-z=]+)',
         '\$abCookieValue': '(?P<ab_cookie_value>[A|B])',
-        '\$request': '(?P<request_request_method>[A-Z]+) (?P<request_request_uri>[\d\D]+) '
-                     '(?P<request_request_http_version>HTTP/[0-9.]+)',
+        '\$request': '(?P<request_request_method>[A-Z]+) (?P<request_request_uri>[\d\D]+) (?P<request_request_http_version>HTTP/[0-9.]+)',
         '\$req_time': '(?P<request_time>[\d.]+)',
     }
 
@@ -94,15 +99,10 @@ class NginxParsing:
 
     @staticmethod
     def parse_log(line):
-        log_format1 = """$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" 
-        "$http_user_agent" "$http_x_forwarded_for" rt=$req_time ua="$upstream_addr" us="$upstream_status"
-         ut="$upstream_response_time" ul="$upstream_response_length" cs=$upstream_cache_status"""
-        # log_format2 = """$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent
-        # "$http_referer" "$http_user_agent" """
-        reg = NginxParsing.dict_sub(log_format1)
-        compiled_regex1 = re.compile(reg, re.IGNORECASE)
-        # compiled_regex2 = re.compile(NginxParsing.dict_sub(log_format2), re.IGNORECASE)
-        parsed = NginxParsing.each_line_fun(compiled_regex1, line.strip())
+        log_format = """$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for" rt=$req_time ua="$upstream_addr" us="$upstream_status" ut="$upstream_response_time" ul="$upstream_response_length" cs=$upstream_cache_status"""
+        reg = NginxParsing.dict_sub(log_format)
+        compiled_regex = re.compile(reg, re.IGNORECASE)
+        parsed = NginxParsing.each_line_fun(compiled_regex, line.strip())
         pparsed = lambda i: parsed.get(i, "")
         """"$remote_addr - $remote_user[$time_local] "$request" $status $body_bytes_sent
         "$http_referer" "$http_user_agent" "$http_x_forwarded_for"
@@ -125,24 +125,27 @@ class NginxParsing:
             'referer': pparsed('http_referer'),
             'user_agent': pparsed('user_agent'),
         }
-        # status = parsed.get('status', "")
         return csv_res
 
 
 class NginxReporter:
     def __init__(self):
-        pass
+        self.url_list = ['/search_api', '/budget_range', '/auto_complete', '/v1/search', '/get_package', '/get_static',
+                         '/clone_package', '/profile/']
 
-    @staticmethod
-    def update_stats(line, stats):
+    def filter_url(self, url):
+        return url in self.url_list
+
+    def update_stats(self, line, stats):
         parsed_data = NginxParsing.parse_log(line)
         url = parsed_data['request_request_uri'].split('?')[0]
-        stats['total_requests_count'].inc()
-        stats['total_requests_count_by_service'].labels(service=url).inc()
-        stats['requests_response_code_count'].labels(service=url, status=parsed_data['status']).inc()
-        stats['total_request_by_user'].labels(user=parsed_data['remote_user']).inc()
-        stats['total_processing_time'].inc(parsed_data['request_time'])
-        stats['total_processing_time_by_url'].labels(service=url).inc(parsed_data['request_time'])
-        if parsed_data['status'] not in [200, 204]:
-            stats['failed_requests_count'].inc()
-            stats['total_requests_failed_count_by_service'].labels(service=url).inc()
+        if self.filter_url(url):
+            stats['total_requests_count'].inc()
+            stats['total_requests_count_by_service'].labels(service=url).inc()
+            stats['requests_response_code_count'].labels(service=url, status=parsed_data['status']).inc()
+            stats['total_request_by_user'].labels(user=parsed_data['remote_user']).inc()
+            stats['total_processing_time'].inc(parsed_data['request_time'])
+            stats['total_processing_time_by_url'].labels(service=url).inc(parsed_data['request_time'])
+            if parsed_data['status'] not in [200, 204]:
+                stats['failed_requests_count'].inc()
+                stats['total_requests_failed_count_by_service'].labels(service=url).inc()

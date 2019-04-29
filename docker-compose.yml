@@ -10,5 +10,4 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - /home/ubuntu/logs:/mnt/logs
-#      - /home/ubuntu/logs:/home/ubuntu/logs
+      - /home/ubuntu/devops/logs:/mnt/logs
