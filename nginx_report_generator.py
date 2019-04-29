@@ -1,14 +1,8 @@
-#from pprint import pprint
-import json
 import re
-from collections import OrderedDict
-from datetime import datetime, timedelta
-from pprint import pprint
+from datetime import datetime
 
-import os
 
 class NginxParsing:
-
     LOG_SPECIAL_SYMBOLS = {
         '\[': '\\[',
         '\]': '\\]',
@@ -40,7 +34,8 @@ class NginxParsing:
         '\$uid_got': '(?P<uid_got>[\-0-9A-Za-z=]+)',
         '\$uid_set': '(?P<uid_set>[\-0-9A-Za-z=]+)',
         '\$abCookieValue': '(?P<ab_cookie_value>[A|B])',
-        '\$request': '(?P<request_request_method>[A-Z]+) (?P<request_request_uri>[\d\D]+) (?P<request_request_http_version>HTTP/[0-9.]+)',
+        '\$request': '(?P<request_request_method>[A-Z]+) (?P<request_request_uri>[\d\D]+) '
+                     '(?P<request_request_http_version>HTTP/[0-9.]+)',
         '\$req_time': '(?P<request_time>[\d.]+)',
     }
 
@@ -99,11 +94,14 @@ class NginxParsing:
 
     @staticmethod
     def parse_log(line):
-        log_format1 = """$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for" rt=$req_time ua="$upstream_addr" us="$upstream_status" ut="$upstream_response_time" ul="$upstream_response_length" cs=$upstream_cache_status"""
-        #log_format2 = """$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" """
+        log_format1 = """$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" 
+        "$http_user_agent" "$http_x_forwarded_for" rt=$req_time ua="$upstream_addr" us="$upstream_status"
+         ut="$upstream_response_time" ul="$upstream_response_length" cs=$upstream_cache_status"""
+        # log_format2 = """$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent
+        # "$http_referer" "$http_user_agent" """
         reg = NginxParsing.dict_sub(log_format1)
         compiled_regex1 = re.compile(reg, re.IGNORECASE)
-        #compiled_regex2 = re.compile(NginxParsing.dict_sub(log_format2), re.IGNORECASE)
+        # compiled_regex2 = re.compile(NginxParsing.dict_sub(log_format2), re.IGNORECASE)
         parsed = NginxParsing.each_line_fun(compiled_regex1, line.strip())
         pparsed = lambda i: parsed.get(i, "")
         """"$remote_addr - $remote_user[$time_local] "$request" $status $body_bytes_sent
@@ -116,17 +114,18 @@ class NginxParsing:
         cs =$upstream_cache_status
         """
         csv_res = {
-                    'time_local':datetime.strptime(pparsed('time_local'), '%d/%b/%Y:%H:%M:%S +%f') if pparsed('time_local') != '' else datetime.now(),
-                    'status': int(pparsed('status')) if pparsed('status') != '' else 0,
-                    'request_request_uri':pparsed('request_request_uri'),
-                    'request_time':float(pparsed('request_time')) if pparsed('request_time') != '' else 0,
-                    'upstream_response_time':pparsed('upstream_response_time'),
-                    'remote_addr':pparsed('remote_addr'),
-                    'remote_user':pparsed('remote_user'),
-                    'referer':pparsed('http_referer'),
-                    'user_agent':pparsed('user_agent'),
-                   }
-        #status = parsed.get('status', "")
+            'time_local': datetime.strptime(pparsed('time_local'), '%d/%b/%Y:%H:%M:%S +%f') if pparsed(
+                'time_local') != '' else datetime.now(),
+            'status': int(pparsed('status')) if pparsed('status') != '' else 0,
+            'request_request_uri': pparsed('request_request_uri'),
+            'request_time': float(pparsed('request_time')) if pparsed('request_time') != '' else 0,
+            'upstream_response_time': pparsed('upstream_response_time'),
+            'remote_addr': pparsed('remote_addr'),
+            'remote_user': pparsed('remote_user'),
+            'referer': pparsed('http_referer'),
+            'user_agent': pparsed('user_agent'),
+        }
+        # status = parsed.get('status', "")
         return csv_res
 
 
@@ -136,7 +135,7 @@ class NginxReporter:
 
     @staticmethod
     def update_stats(line, stats):
-        parsed_data=NginxParsing.parse_log(line)
+        parsed_data = NginxParsing.parse_log(line)
         url = parsed_data['request_request_uri'].split('?')[0]
         stats['total_requests_count'].inc()
         stats['total_requests_count_by_service'].labels(service=url).inc()
@@ -147,5 +146,3 @@ class NginxReporter:
         if parsed_data['status'] not in [200, 204]:
             stats['failed_requests_count'].inc()
             stats['total_requests_failed_count_by_service'].labels(service=url).inc()
-
-

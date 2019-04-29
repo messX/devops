@@ -1,6 +1,6 @@
 import time
 
-from prometheus_client import Counter, Gauge
+from prometheus_client import Counter
 
 from nginx_report_generator import NginxReporter
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 cd /home/ubuntu/devops
 git fetch --all
 git clean -f

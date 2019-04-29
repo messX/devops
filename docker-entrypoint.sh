@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 cd /home/ubuntu/devops
 git reset --hard
 git clean -f
