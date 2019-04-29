@@ -9,7 +9,7 @@ def run_server_watch_file():
     Start up the server to expose the metrics.
     """
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    log_dir = '{}/logs'.format(dir_path)
+    log_dir = '{}'.format(dir_path)
     files = [file for file in os.listdir(log_dir) if file.endswith('.log')]
     _file = '{}/{}'.format(log_dir, files[0])
     start_http_server(8080)
