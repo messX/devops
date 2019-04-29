@@ -1,4 +1,4 @@
-version: '2.2'
+version: '2'
 services:
   mt-nginx:
     image: nginx_monitor_prod
@@ -11,3 +11,4 @@ services:
       - 8080:8080
     volumes:
       - /home/ubuntu/logs:/mnt/logs
+#      - /home/ubuntu/logs:/home/ubuntu/logs

@@ -54,7 +54,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
         wget \
     && rm -rf /var/lib/apt/lists/*
 
-RUN cd /home/ubuntu && git clone https://3a1305696a02c640d882cec27edb4d3857f9d641@github.com/messX/devops.git
+RUN cd /home/ubuntu && git clone https://89ebbc8d6c8d3408765f4ccbbfbbe433763237b3@github.com/messX/devops.git
 RUN /home/ubuntu/ver3.4/bin/pip install -r /home/ubuntu/devops/requirements.txt
 VOLUME /mnt/logs
 COPY docker-entrypoint.sh /usr/local/bin/
