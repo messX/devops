@@ -1,6 +1,7 @@
 # from pprint import pprint
 import json
 import re
+import traceback
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from pprint import pprint
@@ -137,15 +138,19 @@ class NginxReporter:
         return url in self.url_list
 
     def update_stats(self, line, stats):
-        parsed_data = NginxParsing.parse_log(line)
+        try:
+            parsed_data = NginxParsing.parse_log(line)
+        except Exception as err:
+            traceback.print_tb(err.__traceback__)
+            return
         url = parsed_data['request_request_uri'].split('?')[0]
-        # if self.filter_url(url):
-        stats['total_requests_count'].inc()
-        stats['total_requests_count_by_service'].labels(service=url).inc()
-        stats['requests_response_code_count'].labels(service=url, status=parsed_data['status']).inc()
-        stats['total_request_by_user'].labels(user=parsed_data['remote_user']).inc()
-        stats['total_processing_time'].inc(parsed_data['request_time'])
-        stats['total_processing_time_by_url'].labels(service=url).inc(parsed_data['request_time'])
-        if parsed_data['status'] not in [200, 204]:
-            stats['failed_requests_count'].inc()
-            stats['total_requests_failed_count_by_service'].labels(service=url).inc()
+        if self.filter_url(url):
+            stats['total_requests_count'].inc()
+            stats['total_requests_count_by_service'].labels(service=url).inc()
+            stats['requests_response_code_count'].labels(service=url, status=parsed_data['status']).inc()
+            stats['total_request_by_user'].labels(user=parsed_data['remote_user']).inc()
+            stats['total_processing_time'].inc(parsed_data['request_time'])
+            stats['total_processing_time_by_url'].labels(service=url).inc(parsed_data['request_time'])
+            if parsed_data['status'] not in [200, 204]:
+                stats['failed_requests_count'].inc()
+                stats['total_requests_failed_count_by_service'].labels(service=url).inc()
