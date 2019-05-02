@@ -1,4 +1,5 @@
 import time
+import traceback
 
 from prometheus_client import Counter
 
@@ -34,6 +35,10 @@ class Generator:
             if not line:
                 time.sleep(5)
             else:
-                NginxReporter().update_stats(line, self.stats)
+                try:
+                    NginxReporter().update_stats(line, self.stats)
+                except Exception as err:
+                    traceback.print_tb(err.__traceback__)
+
 
 
