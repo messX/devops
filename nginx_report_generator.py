@@ -132,7 +132,7 @@ class NginxParsing:
 class NginxReporter:
     def __init__(self):
         self.url_list = ['/search_api', '/budget_range', '/auto_complete', '/v1/search', '/get_package', '/get_static',
-                         '/clone_package', '/location_details_ui', '/get_location_group_data']
+                         '/clone_package', '/location_details_ui', '/get_location_group_data','/update_user_ph']
 
     def filter_url(self, url):
         return url in self.url_list
