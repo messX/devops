@@ -8,6 +8,6 @@ services:
     env_file:
       - env-prod.env
     ports:
-      - 8080:8080
+      - 8001:8080
     volumes:
       - /home/ubuntu/logs:/mnt/logs
