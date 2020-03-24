@@ -28,7 +28,7 @@ RUN mkdir -p /home/ubuntu/devops && mkdir -p /mnt/logs && chown -R ubuntu:ubuntu
 #django setup
 RUN  apt-get update -y
 RUN  apt-get install python-pip -y
-
+RUN pip install --upgrade pip
 RUN  pip install virtualenv
 RUN virtualenv -p /usr/bin/python3 /home/ubuntu/ver3.4
 RUN  chown -R ubuntu /home/ubuntu/ver3.4
